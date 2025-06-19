@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: app_development
+    ports:
+      - "3307:3306"  
+
+  web:
+    build: .
+    command: bash -c "bundle install && rails s -b 0.0.0.0 -p 3100"
+    ports:
+      - "3100:3100"  # Railsを3100で起動
+    volumes:
+      - ./myapp:/myapp
+    working_dir: /myapp
+    depends_on:
+      - db
+      - solr
+
+  solr:
+    image: solr:8.11
+    container_name: solr
+    ports:
+      - "8984:8983"
+    volumes:
+      - ./solr:/var/solr
+    command: solr-precreate rails_core

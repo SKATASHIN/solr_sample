@@ -1,0 +1,7 @@
+# Rails アプリケーションと Solr を接続するための設定
+development:
+  solr:
+    hostname: solr
+    port: 8983
+    path: /solr/rails_core
+    log_level: WARNING
