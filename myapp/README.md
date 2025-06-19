@@ -1,24 +1,17 @@
-# README
+## 🔖 開発用メモ（Solr関連）
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```bash
+# Railsが動いているコンテナに入る（例: webサーバ）
+docker-compose exec web bash
 
-Things you may want to cover:
+# データベースを初期化（全テーブル削除＋作成）
+bundle exec rails db:reset
 
-* Ruby version
+# ダミーデータを再投入
+bundle exec rails db:seed
 
-* System dependencies
+# Solr にインデックスを再構築（検索対象にする）
+bundle exec rake sunspot:reindex
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# 検索ベンチマーク実行（SQL vs Solr）
+bundle exec rake speed_results:search
