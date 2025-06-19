@@ -1,0 +1,3 @@
+# Solrが自動生成する不要ファイル
+solr/data/
+solr/logs/
