@@ -1,12 +1,4 @@
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: app_development
-    ports:
-      - "3307:3306"  
-
   web:
     build: .
     command: bash -c "bundle install && rails s -b 0.0.0.0 -p 3100"
@@ -18,6 +10,13 @@ services:
     depends_on:
       - db
       - solr
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: app_development
+    ports:
+      - "3307:3306"  
 
   solr:
     image: solr:8.11
