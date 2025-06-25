@@ -10,7 +10,7 @@
 
 puts "Creating dummy!!!"
 
-10000.times do |i|
+50000.times do |i|
   Article.create(
     title: "タイトルだよ！#{i}",
     body: "本文だぞ！！！！！！#{i}"
