@@ -12,23 +12,20 @@ class GoogleSheet
     @worksheet = @spreadsheet.worksheet_by_title(worksheet_title)
   end
 
+  # スプシ書込み
   def append_row(rows)
-    puts "スプレッドシートへの書き込み開始"
+    puts "スプシ書込中..."
     @worksheet.insert_rows(@worksheet.num_rows + 1, rows)
     @worksheet.save
-    puts "スプレッドシートへの書き込みに成功しました!"
+    puts "スプシ書込完了"
   end
 
   # スプシ初期化
   def clear_worksheet
-    puts "スプシ初期化開始"
+    return puts "スプシは既に空です" if @worksheet.num_rows == 0
 
-    if @worksheet.num_rows > 0
-      @worksheet.delete_rows(1, @worksheet.num_rows)
-    else
-      puts "スプシにデータがありません"
-    end
-
+    puts "スプシ初期化中..."
+    @worksheet.delete_rows(1, @worksheet.num_rows)
     @worksheet.save
     puts "スプシ初期化完了"
   end
