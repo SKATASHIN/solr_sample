@@ -25,4 +25,9 @@ services:
       - "8984:8983"
     volumes:
       - ./solr:/var/solr
-    command: solr-precreate rails_core
+    command: >
+      bash -c "
+        precreate-core round1 &&
+        precreate-core round2 &&
+        solr-foreground
+      "
