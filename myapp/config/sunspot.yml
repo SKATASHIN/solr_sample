@@ -3,5 +3,5 @@ development:
   solr:
     hostname: solr
     port: 8983
-    path: /solr/rails_core
+    path: /solr/<%= ENV['SOLR_CORE'] || 'round1'%>
     log_level: WARNING
