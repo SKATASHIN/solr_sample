@@ -8,20 +8,33 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-puts "Creating dummy!!!"
+puts "================ダミー作成開始================="
 
-50000.times do |i|
-  Article.create(
-    title: "タイトルだよ！#{i}",
-    body: "本文だぞ！！！！！！#{i}"
-  )
+# Round１テスト用データ
+if Article.count < 50_000
+  50000.times do |i|
+    Article.create(
+      title: "タイトルだよ！#{i}",
+      body: "本文だぞ！！！！！！#{i}"
+    )
+  end
 end
 
-Article.create(
-  title: "solrベンチマーク用",
-  body: "特別投稿: SuperUniqueKeyword2025"
-)
+Article.find_or_create_by!(title: "solrベンチマーク用") do |article|
+  article.body = "特別投稿: SuperUniqueKeyword2025"
+end
 
-puts "created #{Article.count} articles"
+puts "レコード作成完了 #{Article.count} articles"
+
+# Round２テスト用データ
+Product.find_or_create_by!(name: "スマートフォン") do |product|
+  product.description = "高性能スマートフォンです"
+end
+
+Product.find_or_create_by!(name: "スマホケース") do |product|
+  product.description = "おしゃれなスマホケースです"
+end
 
 
+puts "レコード作成完了 #{Product.count} products"
+puts "================ダミー作成完了================="
