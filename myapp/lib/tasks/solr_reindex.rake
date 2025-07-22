@@ -1,15 +1,15 @@
 namespace :solr do
   desc "round1 Reindex"
-  task reindex_article: :environment do
-    puts "================reindex_article開始================="
-    Article.reindex
-    puts "================reindex_article完了================="
+  task reindex_round_one: :environment do
+    puts "================reindex_round_one開始================="
+    RoundOne.reindex
+    puts "================reindex_round_one完了================="
   end
 
   desc "round2 Reindex"
-  task reindex_product: :environment do 
-    puts "================reindex_product開始================="
-    Product.reindex
-    puts "================reindex_product完了================="
+  task reindex_round_two: :environment do 
+    puts "================reindex_round_two開始================="
+    RoundTwo.reindex
+    puts "================reindex_round_two完了================="
   end
 end

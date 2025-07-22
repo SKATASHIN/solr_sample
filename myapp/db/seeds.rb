@@ -11,30 +11,57 @@
 puts "================ダミー作成開始================="
 
 # Round１テスト用データ
-if Article.count < 50_000
-  50000.times do |i|
-    Article.create(
-      title: "タイトルだよ！#{i}",
+if RoundOne.count < 30_025
+  1.upto(30_000) do |i|
+    RoundOne.create(
       body: "本文だぞ！！！！！！#{i}"
+    )
+  end
+
+  # ヒット用データ
+  1.upto(25) do |i|
+    RoundOne.create(
+      body: "特別投稿: SuperUniqueKeyword2025 #{i}"
     )
   end
 end
 
-Article.find_or_create_by!(title: "solrベンチマーク用") do |article|
-  article.body = "特別投稿: SuperUniqueKeyword2025"
+puts "レコード作成完了 #{RoundOne.count} RoundOne"
+
+if RoundTwo.count < 30_025
+  # A: titleのみ一致（10件）
+  1.upto(10) do |i|
+    RoundTwo.create!(
+      title: "SuperUniqueKeyword2025 を含むタイトル #{i}",
+      body: "これは一致しない本文です #{i}"
+    )
+  end
+
+  # B: bodyのみ一致（10件）
+  1.upto(10) do |i|
+    RoundTwo.create!(
+      title: "一致しないタイトル #{i}",
+      body: "これは SuperUniqueKeyword2025 を含む本文です #{i}"
+    )
+  end
+
+  # C: 両方一致（5件）
+  1.upto(5) do |i|
+    RoundTwo.create!(
+      title: "SuperUniqueKeyword2025 を含むタイトル #{i}",
+      body: "SuperUniqueKeyword2025 を含む本文 #{i}"
+    )
+  end
+
+  # D: 両方一致しない（10_000件）
+  1.upto(30_000) do |i|
+    RoundTwo.create!(
+      title: "通常のタイトル #{i}",
+      body: "通常の本文 #{i}"
+    )
+  end
 end
 
-puts "レコード作成完了 #{Article.count} articles"
+puts "レコード作成完了 #{RoundTwo.count} RoundTwo"
 
-# Round２テスト用データ
-Product.find_or_create_by!(name: "スマートフォン") do |product|
-  product.description = "高性能スマートフォンです"
-end
-
-Product.find_or_create_by!(name: "スマホケース") do |product|
-  product.description = "おしゃれなスマホケースです"
-end
-
-
-puts "レコード作成完了 #{Product.count} products"
 puts "================ダミー作成完了================="
