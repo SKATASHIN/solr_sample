@@ -12,4 +12,11 @@ namespace :solr do
     RoundTwo.reindex
     puts "================reindex_round_two完了================="
   end
+
+  desc "round3 Reindex"
+  task reindex_round_three: :environment do 
+    puts "================reindex_round_three開始================="
+    RoundThree.reindex
+    puts "================reindex_round_three完了================="
+  end
 end

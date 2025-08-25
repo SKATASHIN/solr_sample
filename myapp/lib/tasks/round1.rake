@@ -1,80 +1,46 @@
+require_relative './benchmark_helper'
+
 namespace :round1 do
-  desc "SQLとSolrの全文検索速度を比較"
+  desc "SQLとSolrの全文検索速度比較"
   task speed: :environment do
     require 'benchmark'
-    puts "================SQLとSolrの全文検索速度開始====================="
+    puts "============SQLとSolrの全文検索速度比較_開始============="
 
-    # 検索キーワード（ダミーデータに含まれる特別なキーワード）
+    BenchmarkHelper.print_all_counts(RoundOne)
+
+    row = 10
     query = 'SuperUniqueKeyword2025'
+    sql_times, solr_times = [], []
+    sql_results, solr_results = [], []
 
-    # データ収集
-    db_count, solr_count = get_data_count
-    sql_times, solr_times = run_benchmarks(query)
-
-    # 計算結果
-    avg_sql, avg_solr = calculate_averages(sql_times, solr_times)
-    winner, ratio = get_winner_and_ratio(avg_sql, avg_solr)
-    puts "================SQLとSolrの全文検索速度終了====================="
-  end
-end
-
-private
-
-  def get_data_count
-    db_count = RoundOne.count
-    solr_count = RoundOne.search { keywords('*') }.total
-
-    puts "DBレコード数: #{db_count}件"
-    puts "Solrインデックス数: #{solr_count}件"
-
-    [db_count, solr_count]
-  end
-
-  def run_benchmarks(query)
-    sql_times = []
-    solr_times = []
-
-    # 5回計測して平均時間を取得
-    5.times do
-      # SQL LIKE検索の実行時間測定
-      sql_time = Benchmark.measure {
-        RoundOne.where("body LIKE ?", "%#{query}%").to_a
-      }.real
-      sql_times << sql_time
-
-      # Solr全文検索の実行時間測定
-      solr_time = Benchmark.measure {
-        RoundOne.search { fulltext(query) { fields(:body) } }.results
-      }.real
-      solr_times << solr_time
+    # --- SQL: FULLTEXT（MATCH AGAINST） ---
+    sql_time = Benchmark.realtime do
+      sql_results = RoundOne
+        .where("MATCH(body) AGAINST (?)", query)
+        .limit(row)
+        .pluck(:id)
     end
 
-    puts "SQL実行時間: #{sql_times}"
-    puts "Solr実行時間: #{solr_times}"
+    # --- Solr: edismax + qf=body ---
+    solr_time = Benchmark.realtime do
+      search = RoundOne.search do
+        adjust_solr_params do |p|
+          p[:qf]      = 'body'
+          p[:fl]      = 'id'
+          p[:rows]    = row
+        end
+        fulltext(query) { fields(:body) }
+      end
 
-    [sql_times, solr_times]
+      solr_results = search.hits.map { |h| h.primary_key.to_i }
+    end
+
+    puts "SQL time : #{sql_time}s"
+    puts "SQL results: #{sql_results.inspect}"
+    puts "Solr time: #{solr_time}s"
+    puts "Solr results: #{solr_results.inspect}"
+
+    puts "============SQLとSolrの全文検索速度比較_終了============="
   end
-
-  def calculate_averages(sql_times, solr_times)
-    avg_sql = (sql_times.sum / sql_times.size).round(4)
-    avg_solr = (solr_times.sum / solr_times.size).round(4)
-
-    puts "SQL平均実行時間: #{avg_sql} 秒"
-    puts "Solr平均実行時間: #{avg_solr} 秒"
-
-    [avg_sql, avg_solr]
-  end
-
-  def get_winner_and_ratio(avg_sql, avg_solr)
-    winner, ratio = if avg_sql < avg_solr
-                      ['sql', (avg_solr / avg_sql).round(2)]
-                    else
-                      ['solr', (avg_sql / avg_solr).round(2)]
-                    end
-
-    puts "勝者: #{winner}"
-    puts "速度比: #{ratio}"
-
-    [winner, ratio]
-  end
+end
 
