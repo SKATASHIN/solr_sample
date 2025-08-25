@@ -11,8 +11,8 @@
 puts "================ダミー作成開始================="
 
 # Round１テスト用データ
-if RoundOne.count < 50_000
-  1.upto(50_000) do |i|
+if RoundOne.count < 30_000
+  1.upto(30_000) do |i|
     RoundOne.create(
       body: "本文だぞ！！！！！！#{i}"
     )
